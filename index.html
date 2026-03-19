@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Pipeline Runway — Feb 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#f8fafc;padding:32px;-webkit-font-smoothing:antialiased}
+.title{font-size:16px;font-weight:800;color:#1e293b;margin-bottom:6px}
+.sub{font-size:12px;color:#64748b;margin-bottom:20px}
+table{border-collapse:collapse;font-size:12px;width:auto}
+thead tr{background:#1e293b}
+thead th{padding:10px 14px;color:#fff;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;text-align:center}
+thead th:first-child{text-align:left}
+tbody tr:nth-child(even){background:#f8fafc}
+tbody tr:nth-child(odd){background:#fff}
+tbody tr.feb26{background:#eff6ff !important;font-weight:700}
+tbody tr.feb26 td{font-weight:700}
+td{padding:7px 14px;text-align:center;white-space:nowrap;color:#1e293b;border-bottom:1px solid #f1f5f9}
+td:first-child{text-align:left;font-weight:700;color:#334155;min-width:80px}
+td:nth-child(2),td:nth-child(3){color:#475569}
+.cell{display:inline-block;min-width:36px;padding:3px 8px;border-radius:5px;font-weight:700;text-align:center}
+</style>
+</head>
+<body>
+<div class="title">Pipeline Runway</div>
+<div class="sub">Pipeline Accounts ÷ Monthly Elections — Jan 2022 through Feb 2026</div>
+<table>
+  <thead>
+    <tr>
+      <th>Month</th>
+      <th>Pipeline Accounts</th>
+      <th>Elections</th>
+      <th>Runway (Months)</th>
+      <th>Runway (6-Mo Rolling)</th>
+      <th>Runway (12-Mo Rolling)</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+
+<script>
+const DATA = [
+  {m:"Jan-22",pipe:384,el:51,mo:8,r6:null,r12:null},
+  {m:"Feb-22",pipe:432,el:24,mo:18,r6:null,r12:null},
+  {m:"Mar-22",pipe:385,el:45,mo:9,r6:null,r12:null},
+  {m:"Apr-22",pipe:306,el:49,mo:6,r6:null,r12:null},
+  {m:"May-22",pipe:339,el:36,mo:9,r6:null,r12:null},
+  {m:"Jun-22",pipe:310,el:34,mo:9,r6:10,r12:null},
+  {m:"Jul-22",pipe:310,el:36,mo:9,r6:10,r12:null},
+  {m:"Aug-22",pipe:310,el:36,mo:9,r6:10,r12:null},
+  {m:"Sep-22",pipe:300,el:39,mo:8,r6:10,r12:null},
+  {m:"Oct-22",pipe:295,el:57,mo:5,r6:8,r12:null},
+  {m:"Nov-22",pipe:290,el:49,mo:6,r6:8,r12:null},
+  {m:"Dec-22",pipe:280,el:28,mo:10,r6:8,r12:9},
+  {m:"Jan-23",pipe:264,el:37,mo:7,r6:7,r12:9},
+  {m:"Feb-23",pipe:272,el:32,mo:9,r6:7,r12:9},
+  {m:"Mar-23",pipe:301,el:57,mo:5,r6:7,r12:8},
+  {m:"Apr-23",pipe:302,el:54,mo:6,r6:7,r12:8},
+  {m:"May-23",pipe:289,el:58,mo:5,r6:7,r12:7},
+  {m:"Jun-23",pipe:288,el:51,mo:6,r6:6,r12:7},
+  {m:"Jul-23",pipe:298,el:32,mo:9,r6:7,r12:7},
+  {m:"Aug-23",pipe:306,el:40,mo:8,r6:6,r12:7},
+  {m:"Sep-23",pipe:307,el:28,mo:11,r6:7,r12:7},
+  {m:"Oct-23",pipe:272,el:47,mo:6,r6:7,r12:7},
+  {m:"Nov-23",pipe:272,el:32,mo:9,r6:8,r12:7},
+  {m:"Dec-23",pipe:266,el:27,mo:10,r6:9,r12:7},
+  {m:"Jan-24",pipe:273,el:27,mo:10,r6:9,r12:8},
+  {m:"Feb-24",pipe:280,el:24,mo:12,r6:9,r12:8},
+  {m:"Mar-24",pipe:284,el:34,mo:8,r6:9,r12:8},
+  {m:"Apr-24",pipe:288,el:23,mo:13,r6:10,r12:9},
+  {m:"May-24",pipe:293,el:22,mo:13,r6:11,r12:9},
+  {m:"Jun-24",pipe:320,el:33,mo:10,r6:11,r12:10},
+  {m:"Jul-24",pipe:336,el:22,mo:15,r6:12,r12:10},
+  {m:"Aug-24",pipe:340,el:20,mo:17,r6:13,r12:11},
+  {m:"Sep-24",pipe:356,el:17,mo:21,r6:15,r12:12},
+  {m:"Oct-24",pipe:339,el:33,mo:10,r6:14,r12:12},
+  {m:"Nov-24",pipe:348,el:27,mo:13,r6:14,r12:13},
+  {m:"Dec-24",pipe:394,el:23,mo:17,r6:16,r12:13},
+  {m:"Jan-25",pipe:372,el:37,mo:10,r6:15,r12:13},
+  {m:"Feb-25",pipe:390,el:28,mo:14,r6:14,r12:13},
+  {m:"Mar-25",pipe:382,el:22,mo:17,r6:14,r12:14},
+  {m:"Apr-25",pipe:362,el:23,mo:16,r6:15,r12:14},
+  {m:"May-25",pipe:326,el:49,mo:7,r6:13,r12:14},
+  {m:"Jun-25",pipe:358,el:35,mo:10,r6:12,r12:14},
+  {m:"Jul-25",pipe:365,el:39,mo:9,r6:12,r12:13},
+  {m:"Aug-25",pipe:364,el:18,mo:20,r6:13,r12:14},
+  {m:"Sep-25",pipe:388,el:19,mo:20,r6:14,r12:14},
+  {m:"Oct-25",pipe:359,el:26,mo:14,r6:13,r12:14},
+  {m:"Nov-25",pipe:376,el:35,mo:11,r6:14,r12:14},
+  {m:"Dec-25",pipe:383,el:27,mo:14,r6:15,r12:14},
+  {m:"Jan-26",pipe:382,el:42,mo:9,r6:15,r12:13},
+  {m:"Feb-26",pipe:371,el:39,mo:10,r6:13,r12:13},
+];
+
+// Color scale for runway months
+function moColor(v) {
+  if (v === null) return '';
+  if (v <= 5)  return 'background:#fee2e2;color:#991b1b';  // red-ish
+  if (v <= 7)  return 'background:#fef9c3;color:#713f12';  // light yellow
+  if (v <= 9)  return 'background:#fde68a;color:#78350f';  // yellow
+  if (v <= 11) return 'background:#bbf7d0;color:#14532d';  // light green
+  if (v <= 14) return 'background:#86efac;color:#14532d';  // medium green
+  if (v <= 17) return 'background:#4ade80;color:#14532d';  // green
+  return             'background:#16a34a;color:#fff';       // dark green
+}
+
+// Softer scale for rolling columns
+function rollColor(v) {
+  if (v === null) return '';
+  if (v <= 7)  return 'background:#fef9c3;color:#713f12';
+  if (v <= 10) return 'background:#d1fae5;color:#065f46';
+  if (v <= 13) return 'background:#6ee7b7;color:#065f46';
+  return             'background:#059669;color:#fff';
+}
+
+const tbody = document.getElementById('tbody');
+DATA.forEach(r => {
+  const isFeb26 = r.m === 'Feb-26';
+  const tr = document.createElement('tr');
+  if (isFeb26) tr.className = 'feb26';
+
+  const moStyle = moColor(r.mo);
+  const r6Style = rollColor(r.r6);
+  const r12Style = rollColor(r.r12);
+
+  tr.innerHTML = `
+    <td>${r.m}</td>
+    <td>${r.pipe.toLocaleString()}</td>
+    <td>${r.el}</td>
+    <td><span class="cell" style="${moStyle}">${r.mo}</span></td>
+    <td>${r.r6 !== null ? `<span class="cell" style="${r6Style}">${r.r6}</span>` : ''}</td>
+    <td>${r.r12 !== null ? `<span class="cell" style="${r12Style}">${r.r12}</span>` : ''}</td>
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>
