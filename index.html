@@ -3,138 +3,1109 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Pipeline Runway — Feb 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Pipeline Runway — Formula Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#f8fafc;padding:32px;-webkit-font-smoothing:antialiased}
-.title{font-size:16px;font-weight:800;color:#1e293b;margin-bottom:6px}
-.sub{font-size:12px;color:#64748b;margin-bottom:20px}
-table{border-collapse:collapse;font-size:12px;width:auto}
-thead tr{background:#1e293b}
-thead th{padding:10px 14px;color:#fff;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;text-align:center}
-thead th:first-child{text-align:left}
-tbody tr:nth-child(even){background:#f8fafc}
-tbody tr:nth-child(odd){background:#fff}
-tbody tr.feb26{background:#eff6ff !important;font-weight:700}
-tbody tr.feb26 td{font-weight:700}
-td{padding:7px 14px;text-align:center;white-space:nowrap;color:#1e293b;border-bottom:1px solid #f1f5f9}
-td:first-child{text-align:left;font-weight:700;color:#334155;min-width:80px}
-td:nth-child(2),td:nth-child(3){color:#475569}
-.cell{display:inline-block;min-width:36px;padding:3px 8px;border-radius:5px;font-weight:700;text-align:center}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#f1f5f9;padding:36px 28px;-webkit-font-smoothing:antialiased;color:#1e293b}
+
+/* ── HEADER ── */
+.page-header{margin-bottom:24px;max-width:860px}
+h1{font-size:20px;font-weight:800;color:#1e293b;margin-bottom:10px;letter-spacing:-.3px}
+.intro{font-size:13px;color:#64748b;line-height:1.7;margin-bottom:6px}
+
+/* ── CHART CARD ── */
+.chart-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;
+  padding:24px 28px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.chart-card h2{font-size:13px;font-weight:700;color:#334155;margin-bottom:4px}
+.chart-caption{font-size:11.5px;color:#94a3b8;margin-bottom:18px;font-style:italic}
+.chart-wrap{position:relative;height:240px}
+.chart-wrap canvas{max-height:240px}
+
+/* ── TABLE CARD ── */
+.table-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;
+  overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.scroll{overflow-x:auto}
+
+table{border-collapse:collapse;min-width:900px;width:100%}
+
+/* group header */
+thead .gh td, thead .gh th{
+  padding:9px 14px;font-size:9px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.1em;text-align:center
+}
+.gh-blank{background:#f8fafc;border-right:1px solid #e2e8f0}
+.gh-old{background:#7f1d1d;color:#fca5a5;border-right:3px solid #fff}
+.gh-gap{background:#e2e8f0;width:10px;padding:0}
+.gh-new{background:#065f46;color:#a7f3d0}
+
+/* col headers */
+thead .ch th{
+  padding:8px 12px;font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;text-align:center;white-space:nowrap;
+  border-bottom:2px solid #e2e8f0;vertical-align:bottom;line-height:1.4
+}
+.ch-blank{background:#f8fafc;border-right:1px solid #e2e8f0;text-align:left !important;color:#94a3b8}
+/* pipeline group */
+.ch-pipe{background:#fef2f2;color:#991b1b}
+.ch-num{background:#fecaca;color:#7f1d1d;border-left:2px dashed #f87171;border-right:2px dashed #f87171}
+/* elections group */
+.ch-el{background:#fff7ed;color:#9a3412}
+.ch-avel{background:#fed7aa;color:#7c2d12}
+/* apps group */
+.ch-app{background:#fef9c3;color:#854d0e}
+.ch-avapp{background:#fde68a;color:#713f12}
+/* denom / result */
+.ch-denom{background:#fca5a5;color:#7f1d1d;border-left:2px solid #ef4444;border-right:2px solid #ef4444}
+.ch-oldres{background:#7f1d1d;color:#fca5a5;border-right:3px solid #fff}
+/* gap */
+.ch-gap{background:#e2e8f0;width:10px;padding:0}
+/* new formula */
+.ch-npipe{background:#e0f2fe;color:#0369a1}
+.ch-nel  {background:#bae6fd;color:#0c4a6e}
+.ch-nmo{background:#f0fdfa;color:#065f46}
+.ch-nr6{background:#a7f3d0;color:#064e3b}
+.ch-nr12{background:#f0fdfa;color:#065f46}
+
+/* equation annotation row */
+thead .eq-row td{
+  font-size:10px;color:#94a3b8;text-align:center;
+  padding:4px 12px;border-bottom:1px solid #f1f5f9;font-style:italic
+}
+.eq-old{background:#fff5f5;color:#dc2626;font-weight:600;font-style:normal}
+.eq-new{background:#f0fdf9;color:#059669;font-weight:600;font-style:normal}
+.eq-gap{background:#f1f5f9}
+.eq-blank{background:#f8fafc;border-right:1px solid #e2e8f0}
+
+/* body */
+tbody tr:nth-child(even) td{background:#f8fafc}
+tbody tr:nth-child(odd)  td{background:#fff}
+tbody tr:hover td{background:#eff6ff !important}
+
+td{
+  padding:5px 12px;text-align:center;white-space:nowrap;
+  color:#374151;border-bottom:1px solid #f1f5f9;
+  font-size:11.5px;font-variant-numeric:tabular-nums
+}
+
+/* column-level overrides */
+.c-date{text-align:left;font-weight:600;color:#334155;border-right:1px solid #e2e8f0}
+.c-num{border-left:2px dashed #fca5a5 !important;border-right:2px dashed #fca5a5 !important;font-weight:600}
+.c-denom{border-left:2px solid #f87171 !important;border-right:2px solid #f87171 !important;font-weight:700}
+.c-oldres{border-right:3px solid #e2e8f0 !important}
+.c-gap{background:#e2e8f0 !important;width:10px;padding:0;border:none}
+.c-npipe{color:#0369a1;font-weight:600}
+.c-nel  {color:#0c4a6e;font-weight:600}
+.c-nr6{font-weight:600}
+.nil{color:#cbd5e1}
+
+/* badges — OLD FORMULA RESULT: slate=working range, amber=inflated, red=severely inflated, dark-red=impossible */
+.badge{display:inline-block;min-width:36px;padding:2px 8px;border-radius:4px;
+  font-weight:700;font-size:11px;text-align:center}
+.b-working  {background:#e2e8f0;color:#334155}            /* 8–20 — plausible runway */
+.b-inflated {background:#fde68a;color:#78350f}            /* 21–60 — denominator shrinking */
+.b-severe   {background:#dc2626;color:#fff}               /* >60 — denominator near zero */
+.b-broken   {background:#7f1d1d;color:#fff;outline:2px solid #dc2626}  /* negative — impossible */
+/* NEW FORMULA RESULT badges */
+.b-low    {background:#fecdd3;color:#9f1239}              /* <9  */
+.b-mid    {background:#fde68a;color:#78350f}              /* 9–11 */
+.b-ok     {background:#bbf7d0;color:#14532d}              /* ≥12 balanced */
+
+/* denom states */
+.denom-bad {color:#dc2626;font-weight:800;font-size:12px}
+.denom-warn{color:#d97706;font-weight:700}
+.denom-ok  {color:#374151}
+
+/* ── FORMULA DESCRIPTION ROW (inside thead, guarantees column alignment) ── */
+.desc-row td{
+  white-space:normal !important;
+  vertical-align:top;
+  padding:16px 18px !important;
+  border-bottom:2px solid #e2e8f0;
+  line-height:1.6;
+}
+.desc-old{background:#fff5f5}
+.desc-new{background:#f0fdf9}
+.desc-gap{background:#e2e8f0}
+.desc-date{background:#f8fafc;border-right:1px solid #e2e8f0}
+.desc-eyebrow{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+.desc-old .desc-eyebrow{color:#991b1b}
+.desc-new .desc-eyebrow{color:#065f46}
+.desc-eq{font-size:11.5px;font-weight:700;line-height:1.5;padding:7px 11px;border-radius:5px;margin-bottom:9px;display:block}
+.desc-eq-old{background:#fee2e2;color:#7f1d1d}
+.desc-eq-new{background:#d1fae5;color:#064e3b}
+.desc-body{font-size:11.5px;color:#64748b;line-height:1.6;font-weight:400}
+
+@media(max-width:700px){
+  body{padding:16px 12px}
+  .table-card{border-radius:12px}
+}
+
 </style>
 </head>
 <body>
-<div class="title">Pipeline Runway</div>
-<div class="sub">Pipeline Accounts ÷ Monthly Elections — Jan 2022 through Feb 2026</div>
+
+<div class="page-header">
+  <h1>Pipeline Runway — Formula Comparison</h1>
+  <p class="intro">The pipeline length number looks different than before because the formula changed. The table and chart below show both measures side by side across the full dataset.</p>
+</div>
+
+<!-- CHART -->
+<div class="chart-card">
+  <h2>Old Formula Result vs. New 6-Mo Rolling View (Aug 2023 – Feb 2026)</h2>
+  <p class="chart-caption">Old formula swings from −270 to +371 across two consecutive months with no real change in pipeline composition. New 6-mo rolling stays within a narrow band throughout.</p>
+  <div class="chart-wrap">
+    <canvas id="volatilityChart"></canvas>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-card">
+<div class="scroll">
 <table>
-  <thead>
-    <tr>
-      <th>Month</th>
-      <th>Pipeline Accounts</th>
-      <th>Elections</th>
-      <th>Runway (Months)</th>
-      <th>Runway (6-Mo Rolling)</th>
-      <th>Runway (12-Mo Rolling)</th>
+<thead>
+  <!-- FORMULA DESCRIPTION ROW — lives inside thead so columns align perfectly -->
+  <tr class="desc-row">
+    <td class="desc-date"></td>
+    <td class="desc-old" colspan="8">
+      <div class="desc-eyebrow">Old Formula &nbsp;·&nbsp; Retired April 2026</div>
+      <span class="desc-eq desc-eq-old">3-Mo Avg Pipeline Accounts &nbsp;÷&nbsp; (3-Mo Avg Elections &minus; 3-Mo Avg New Applicants)</span>
+      <p class="desc-body">The old formula divided 3-month average pipeline accounts by the gap between average elections and average new applicants. When those two inputs converged, the denominator approached zero and the result became mathematically unstable.</p>
+    </td>
+    <td class="desc-gap"></td>
+    <td class="desc-new" colspan="5">
+      <div class="desc-eyebrow">New Formula &nbsp;·&nbsp; Standard from April 2026</div>
+      <span class="desc-eq desc-eq-new">Pipeline Accounts &nbsp;÷&nbsp; Monthly Elections</span>
+      <p class="desc-body">More straightforward. Confirmed against 6- and 12-month rolling views so one unusual month doesn't distort the picture. The pipeline hasn't changed — the lens is more usable and shows the growth post-COVID.</p>
+    </td>
+  </tr>
+  <!-- GROUP ROW -->
+  <tr class="gh">
+    <td class="gh-blank" rowspan="3" style="text-align:left;padding:10px 14px;font-weight:700;font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em">Date</td>
+    <th class="gh-old" colspan="8">Old Formula &nbsp;·&nbsp; Retired April 2026</th>
+    <td class="gh-gap" rowspan="3"></td>
+    <th class="gh-new" colspan="5">New Formula &nbsp;·&nbsp; Standard from April 2026</th>
+  </tr>
+  <!-- COL HEADERS -->
+  <tr class="ch">
+    <th class="ch-pipe">Pipeline<br>Accounts</th>
+    <th class="ch-num">3-Mo Avg<br>Pipeline<br><span style="font-size:8px;opacity:.75">NUMERATOR</span></th>
+    <th class="ch-el">New<br>Accounts</th>
+    <th class="ch-avel">3-Mo Avg<br>New Accts</th>
+    <th class="ch-app">New $100<br>Apps</th>
+    <th class="ch-avapp">3-Mo Avg<br>New Apps</th>
+    <th class="ch-denom">Avg Accts<br>minus Avg Apps<br><span style="font-size:8px;opacity:.75">DENOMINATOR</span></th>
+    <th class="ch-oldres">Old Result</th>
+    <th class="ch-npipe">Pipeline<br>Accounts</th>
+    <th class="ch-nel">New<br>Accounts</th>
+    <th class="ch-nmo">Monthly<br>Pipeline ÷ Elections</th>
+    <th class="ch-nr6">6-Mo Rolling<br><span style="font-size:8px;opacity:.75">PACE VIEW</span></th>
+    <th class="ch-nr12">12-Mo Rolling<br>View</th>
+  </tr>
+  <!-- EQUATION HINT ROW -->
+  <tr class="eq-row">
+    <td class="eq-old" colspan="2" style="border-left:none">← step 1: smooth the pipeline</td>
+    <td class="eq-old" colspan="4">step 2: smooth elections and applicants separately →</td>
+    <td class="eq-old">step 3: subtract</td>
+    <td class="eq-old">step 1 ÷ step 3</td>
+    <td class="eq-new">pipeline</td>
+    <td class="eq-new">elections</td>
+    <td class="eq-new">step 1: pipeline ÷ elections</td>
+    <td class="eq-new" style="border-left:2px solid rgba(16,185,129,.3)">← 6-mo rolling pace · primary view</td>
+    <td class="eq-new">12-mo baseline</td>
+  </tr>
+</thead>
+<tbody>
+<tr>
+      <td class="c-date">Apr-22</td>
+      <td class="c-pipe">306</td>
+      <td class="c-num"><span class="nil">—</span></td>
+      <td class="c-el">49</td>
+      <td class="c-avel"><span class="nil">—</span></td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">306</td>
+      <td class="c-nel">49</td>
+      <td class="c-nmo">6</td>
+      <td class="c-nr6"><span class="nil">—</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
     </tr>
-  </thead>
-  <tbody id="tbody"></tbody>
+<tr>
+      <td class="c-date">May-22</td>
+      <td class="c-pipe">339</td>
+      <td class="c-num"><span class="nil">—</span></td>
+      <td class="c-el">36</td>
+      <td class="c-avel"><span class="nil">—</span></td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">339</td>
+      <td class="c-nel">36</td>
+      <td class="c-nmo">9</td>
+      <td class="c-nr6"><span class="nil">—</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Jun-22</td>
+      <td class="c-pipe">310</td>
+      <td class="c-num">318</td>
+      <td class="c-el">34</td>
+      <td class="c-avel">40</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">310</td>
+      <td class="c-nel">34</td>
+      <td class="c-nmo">9</td>
+      <td class="c-nr6"><span class="nil">—</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Jul-22</td>
+      <td class="c-pipe">310</td>
+      <td class="c-num">320</td>
+      <td class="c-el">36</td>
+      <td class="c-avel">35</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">310</td>
+      <td class="c-nel">36</td>
+      <td class="c-nmo">9</td>
+      <td class="c-nr6"><span class="nil">—</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Aug-22</td>
+      <td class="c-pipe">310</td>
+      <td class="c-num">310</td>
+      <td class="c-el">36</td>
+      <td class="c-avel">35</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">310</td>
+      <td class="c-nel">36</td>
+      <td class="c-nmo">9</td>
+      <td class="c-nr6"><span class="nil">—</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Sep-22</td>
+      <td class="c-pipe">300</td>
+      <td class="c-num">307</td>
+      <td class="c-el">39</td>
+      <td class="c-avel">37</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">300</td>
+      <td class="c-nel">39</td>
+      <td class="c-nmo">8</td>
+      <td class="c-nr6"><span class="badge b-low">8</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Oct-22</td>
+      <td class="c-pipe">295</td>
+      <td class="c-num">302</td>
+      <td class="c-el">57</td>
+      <td class="c-avel">44</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">295</td>
+      <td class="c-nel">57</td>
+      <td class="c-nmo">5</td>
+      <td class="c-nr6"><span class="badge b-low">8</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Nov-22</td>
+      <td class="c-pipe">290</td>
+      <td class="c-num">295</td>
+      <td class="c-el">49</td>
+      <td class="c-avel">48</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">290</td>
+      <td class="c-nel">49</td>
+      <td class="c-nmo">6</td>
+      <td class="c-nr6"><span class="badge b-low">8</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Dec-22</td>
+      <td class="c-pipe">280</td>
+      <td class="c-num">288</td>
+      <td class="c-el">28</td>
+      <td class="c-avel">45</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">280</td>
+      <td class="c-nel">28</td>
+      <td class="c-nmo">10</td>
+      <td class="c-nr6"><span class="badge b-low">8</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Jan-23</td>
+      <td class="c-pipe">264</td>
+      <td class="c-num">278</td>
+      <td class="c-el">37</td>
+      <td class="c-avel">38</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">264</td>
+      <td class="c-nel">37</td>
+      <td class="c-nmo">7</td>
+      <td class="c-nr6"><span class="badge b-low">7</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Feb-23</td>
+      <td class="c-pipe">272</td>
+      <td class="c-num">272</td>
+      <td class="c-el">32</td>
+      <td class="c-avel">32</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">272</td>
+      <td class="c-nel">32</td>
+      <td class="c-nmo">9</td>
+      <td class="c-nr6"><span class="badge b-low">7</span></td>
+      <td class="c-nr12"><span class="nil">—</span></td>
+    </tr>
+<tr>
+      <td class="c-date">Mar-23</td>
+      <td class="c-pipe">301</td>
+      <td class="c-num">279</td>
+      <td class="c-el">57</td>
+      <td class="c-avel">42</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">301</td>
+      <td class="c-nel">57</td>
+      <td class="c-nmo">5</td>
+      <td class="c-nr6"><span class="badge b-low">7</span></td>
+      <td class="c-nr12">8</td>
+    </tr>
+<tr>
+      <td class="c-date">Apr-23</td>
+      <td class="c-pipe">302</td>
+      <td class="c-num">292</td>
+      <td class="c-el">46</td>
+      <td class="c-avel">45</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">302</td>
+      <td class="c-nel">46</td>
+      <td class="c-nmo">7</td>
+      <td class="c-nr6"><span class="badge b-low">7</span></td>
+      <td class="c-nr12">8</td>
+    </tr>
+<tr>
+      <td class="c-date">May-23</td>
+      <td class="c-pipe">289</td>
+      <td class="c-num">297</td>
+      <td class="c-el">44</td>
+      <td class="c-avel">49</td>
+      <td class="c-app"><span class="nil">—</span></td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">289</td>
+      <td class="c-nel">44</td>
+      <td class="c-nmo">7</td>
+      <td class="c-nr6"><span class="badge b-low">7</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Jun-23</td>
+      <td class="c-pipe">288</td>
+      <td class="c-num">293</td>
+      <td class="c-el">43</td>
+      <td class="c-avel">44</td>
+      <td class="c-app">12</td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">288</td>
+      <td class="c-nel">43</td>
+      <td class="c-nmo">7</td>
+      <td class="c-nr6"><span class="badge b-low">7</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Jul-23</td>
+      <td class="c-pipe">298</td>
+      <td class="c-num">292</td>
+      <td class="c-el">60</td>
+      <td class="c-avel">49</td>
+      <td class="c-app">13</td>
+      <td class="c-avapp"><span class="nil">—</span></td>
+      <td class="c-denom"><span class="nil">—</span></td>
+      <td class="c-oldres"><span class="nil">—</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">298</td>
+      <td class="c-nel">60</td>
+      <td class="c-nmo">5</td>
+      <td class="c-nr6"><span class="badge b-low">6</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Aug-23</td>
+      <td class="c-pipe">306</td>
+      <td class="c-num">297</td>
+      <td class="c-el">46</td>
+      <td class="c-avel">50</td>
+      <td class="c-app">18</td>
+      <td class="c-avapp">14</td>
+      <td class="c-denom"><span class="denom-ok">36</span></td>
+      <td class="c-oldres"><span class="badge b-working">8</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">306</td>
+      <td class="c-nel">46</td>
+      <td class="c-nmo">7</td>
+      <td class="c-nr6"><span class="badge b-low">6</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Sep-23</td>
+      <td class="c-pipe">307</td>
+      <td class="c-num">304</td>
+      <td class="c-el">40</td>
+      <td class="c-avel">49</td>
+      <td class="c-app">19</td>
+      <td class="c-avapp">17</td>
+      <td class="c-denom"><span class="denom-ok">32</span></td>
+      <td class="c-oldres"><span class="badge b-working">9</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">307</td>
+      <td class="c-nel">40</td>
+      <td class="c-nmo">8</td>
+      <td class="c-nr6"><span class="badge b-low">7</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Oct-23</td>
+      <td class="c-pipe">272</td>
+      <td class="c-num">295</td>
+      <td class="c-el">53</td>
+      <td class="c-avel">46</td>
+      <td class="c-app">22</td>
+      <td class="c-avapp">20</td>
+      <td class="c-denom"><span class="denom-ok">26</span></td>
+      <td class="c-oldres"><span class="badge b-working">11</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">272</td>
+      <td class="c-nel">53</td>
+      <td class="c-nmo">5</td>
+      <td class="c-nr6"><span class="badge b-low">6</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Nov-23</td>
+      <td class="c-pipe">272</td>
+      <td class="c-num">284</td>
+      <td class="c-el">47</td>
+      <td class="c-avel">47</td>
+      <td class="c-app">17</td>
+      <td class="c-avapp">19</td>
+      <td class="c-denom"><span class="denom-ok">28</span></td>
+      <td class="c-oldres"><span class="badge b-working">10</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">272</td>
+      <td class="c-nel">47</td>
+      <td class="c-nmo">6</td>
+      <td class="c-nr6"><span class="badge b-low">6</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Dec-23</td>
+      <td class="c-pipe">266</td>
+      <td class="c-num">270</td>
+      <td class="c-el">32</td>
+      <td class="c-avel">44</td>
+      <td class="c-app">19</td>
+      <td class="c-avapp">19</td>
+      <td class="c-denom"><span class="denom-ok">25</span></td>
+      <td class="c-oldres"><span class="badge b-working">11</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">266</td>
+      <td class="c-nel">32</td>
+      <td class="c-nmo">8</td>
+      <td class="c-nr6"><span class="badge b-low">6</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Jan-24</td>
+      <td class="c-pipe">273</td>
+      <td class="c-num">270</td>
+      <td class="c-el">27</td>
+      <td class="c-avel">35</td>
+      <td class="c-app">17</td>
+      <td class="c-avapp">18</td>
+      <td class="c-denom"><span class="denom-ok">17</span></td>
+      <td class="c-oldres"><span class="badge b-working">15</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">273</td>
+      <td class="c-nel">27</td>
+      <td class="c-nmo">10</td>
+      <td class="c-nr6"><span class="badge b-low">7</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Feb-24</td>
+      <td class="c-pipe">280</td>
+      <td class="c-num">273</td>
+      <td class="c-el">24</td>
+      <td class="c-avel">28</td>
+      <td class="c-app">23</td>
+      <td class="c-avapp">20</td>
+      <td class="c-denom"><span class="denom-ok">8</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">34</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">280</td>
+      <td class="c-nel">24</td>
+      <td class="c-nmo">12</td>
+      <td class="c-nr6"><span class="badge b-low">8</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Mar-24</td>
+      <td class="c-pipe">284</td>
+      <td class="c-num">279</td>
+      <td class="c-el">34</td>
+      <td class="c-avel">28</td>
+      <td class="c-app">17</td>
+      <td class="c-avapp">19</td>
+      <td class="c-denom"><span class="denom-ok">9</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">30</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">284</td>
+      <td class="c-nel">34</td>
+      <td class="c-nmo">8</td>
+      <td class="c-nr6"><span class="badge b-low">8</span></td>
+      <td class="c-nr12">7</td>
+    </tr>
+<tr>
+      <td class="c-date">Apr-24</td>
+      <td class="c-pipe">288</td>
+      <td class="c-num">284</td>
+      <td class="c-el">23</td>
+      <td class="c-avel">27</td>
+      <td class="c-app">16</td>
+      <td class="c-avapp">19</td>
+      <td class="c-denom"><span class="denom-ok">8</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">34</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">288</td>
+      <td class="c-nel">23</td>
+      <td class="c-nmo">13</td>
+      <td class="c-nr6"><span class="badge b-mid">9</span></td>
+      <td class="c-nr12">8</td>
+    </tr>
+<tr>
+      <td class="c-date">May-24</td>
+      <td class="c-pipe">293</td>
+      <td class="c-num">288</td>
+      <td class="c-el">22</td>
+      <td class="c-avel">26</td>
+      <td class="c-app">20</td>
+      <td class="c-avapp">18</td>
+      <td class="c-denom"><span class="denom-ok">8</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">33</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">293</td>
+      <td class="c-nel">22</td>
+      <td class="c-nmo">13</td>
+      <td class="c-nr6"><span class="badge b-mid">11</span></td>
+      <td class="c-nr12">8</td>
+    </tr>
+<tr>
+      <td class="c-date">Jun-24</td>
+      <td class="c-pipe">320</td>
+      <td class="c-num">300</td>
+      <td class="c-el">33</td>
+      <td class="c-avel">26</td>
+      <td class="c-app">17</td>
+      <td class="c-avapp">18</td>
+      <td class="c-denom"><span class="denom-ok">8</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">36</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">320</td>
+      <td class="c-nel">33</td>
+      <td class="c-nmo">10</td>
+      <td class="c-nr6"><span class="badge b-mid">11</span></td>
+      <td class="c-nr12">9</td>
+    </tr>
+<tr>
+      <td class="c-date">Jul-24</td>
+      <td class="c-pipe">336</td>
+      <td class="c-num">316</td>
+      <td class="c-el">22</td>
+      <td class="c-avel">26</td>
+      <td class="c-app">11</td>
+      <td class="c-avapp">16</td>
+      <td class="c-denom"><span class="denom-ok">10</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">33</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">336</td>
+      <td class="c-nel">22</td>
+      <td class="c-nmo">15</td>
+      <td class="c-nr6"><span class="badge b-ok">12</span></td>
+      <td class="c-nr12">10</td>
+    </tr>
+<tr>
+      <td class="c-date">Aug-24</td>
+      <td class="c-pipe">340</td>
+      <td class="c-num">332</td>
+      <td class="c-el">20</td>
+      <td class="c-avel">25</td>
+      <td class="c-app">13</td>
+      <td class="c-avapp">14</td>
+      <td class="c-denom"><span class="denom-ok">11</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">29</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">340</td>
+      <td class="c-nel">20</td>
+      <td class="c-nmo">17</td>
+      <td class="c-nr6"><span class="badge b-ok">13</span></td>
+      <td class="c-nr12">10</td>
+    </tr>
+<tr>
+      <td class="c-date">Sep-24</td>
+      <td class="c-pipe">356</td>
+      <td class="c-num">344</td>
+      <td class="c-el">17</td>
+      <td class="c-avel">20</td>
+      <td class="c-app">13</td>
+      <td class="c-avapp">12</td>
+      <td class="c-denom"><span class="denom-ok">8</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">47</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">356</td>
+      <td class="c-nel">17</td>
+      <td class="c-nmo">21</td>
+      <td class="c-nr6"><span class="badge b-ok">15</span></td>
+      <td class="c-nr12">12</td>
+    </tr>
+<tr>
+      <td class="c-date">Oct-24</td>
+      <td class="c-pipe">339</td>
+      <td class="c-num">345</td>
+      <td class="c-el">33</td>
+      <td class="c-avel">23</td>
+      <td class="c-app">24</td>
+      <td class="c-avapp">17</td>
+      <td class="c-denom"><span class="denom-ok">6</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">52</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">339</td>
+      <td class="c-nel">33</td>
+      <td class="c-nmo">10</td>
+      <td class="c-nr6"><span class="badge b-ok">14</span></td>
+      <td class="c-nr12">12</td>
+    </tr>
+<tr>
+      <td class="c-date">Nov-24</td>
+      <td class="c-pipe">348</td>
+      <td class="c-num">348</td>
+      <td class="c-el">27</td>
+      <td class="c-avel">26</td>
+      <td class="c-app">23</td>
+      <td class="c-avapp">20</td>
+      <td class="c-denom"><span class="denom-ok">6</span></td>
+      <td class="c-oldres"><span class="badge b-severe">61</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">348</td>
+      <td class="c-nel">27</td>
+      <td class="c-nmo">13</td>
+      <td class="c-nr6"><span class="badge b-ok">14</span></td>
+      <td class="c-nr12">13</td>
+    </tr>
+<tr>
+      <td class="c-date">Dec-24</td>
+      <td class="c-pipe">394</td>
+      <td class="c-num">360</td>
+      <td class="c-el">20</td>
+      <td class="c-avel">27</td>
+      <td class="c-app">37</td>
+      <td class="c-avapp">28</td>
+      <td class="c-denom"><span class="denom-bad">-1</span></td>
+      <td class="c-oldres"><span class="badge b-broken">-270</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">394</td>
+      <td class="c-nel">20</td>
+      <td class="c-nmo">20</td>
+      <td class="c-nr6"><span class="badge b-ok">16</span></td>
+      <td class="c-nr12">13</td>
+    </tr>
+<tr>
+      <td class="c-date">Jan-25</td>
+      <td class="c-pipe">372</td>
+      <td class="c-num">371</td>
+      <td class="c-el">37</td>
+      <td class="c-avel">28</td>
+      <td class="c-app">21</td>
+      <td class="c-avapp">27</td>
+      <td class="c-denom"><span class="denom-bad">1</span></td>
+      <td class="c-oldres"><span class="badge b-severe">371</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">372</td>
+      <td class="c-nel">37</td>
+      <td class="c-nmo">10</td>
+      <td class="c-nr6"><span class="badge b-ok">15</span></td>
+      <td class="c-nr12">13</td>
+    </tr>
+<tr>
+      <td class="c-date">Feb-25</td>
+      <td class="c-pipe">390</td>
+      <td class="c-num">385</td>
+      <td class="c-el">28</td>
+      <td class="c-avel">28</td>
+      <td class="c-app">14</td>
+      <td class="c-avapp">24</td>
+      <td class="c-denom"><span class="denom-warn">4</span></td>
+      <td class="c-oldres"><span class="badge b-severe">89</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">390</td>
+      <td class="c-nel">28</td>
+      <td class="c-nmo">14</td>
+      <td class="c-nr6"><span class="badge b-ok">15</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Mar-25</td>
+      <td class="c-pipe">382</td>
+      <td class="c-num">381</td>
+      <td class="c-el">22</td>
+      <td class="c-avel">29</td>
+      <td class="c-app">16</td>
+      <td class="c-avapp">17</td>
+      <td class="c-denom"><span class="denom-ok">12</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">32</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">382</td>
+      <td class="c-nel">22</td>
+      <td class="c-nmo">17</td>
+      <td class="c-nr6"><span class="badge b-ok">14</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Apr-25</td>
+      <td class="c-pipe">362</td>
+      <td class="c-num">378</td>
+      <td class="c-el">23</td>
+      <td class="c-avel">24</td>
+      <td class="c-app">15</td>
+      <td class="c-avapp">15</td>
+      <td class="c-denom"><span class="denom-ok">9</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">41</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">362</td>
+      <td class="c-nel">23</td>
+      <td class="c-nmo">16</td>
+      <td class="c-nr6"><span class="badge b-ok">15</span></td>
+      <td class="c-nr12">15</td>
+    </tr>
+<tr>
+      <td class="c-date">May-25</td>
+      <td class="c-pipe">326</td>
+      <td class="c-num">357</td>
+      <td class="c-el">49</td>
+      <td class="c-avel">31</td>
+      <td class="c-app">13</td>
+      <td class="c-avapp">15</td>
+      <td class="c-denom"><span class="denom-ok">16</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">21</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">326</td>
+      <td class="c-nel">49</td>
+      <td class="c-nmo">7</td>
+      <td class="c-nr6"><span class="badge b-ok">14</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Jun-25</td>
+      <td class="c-pipe">358</td>
+      <td class="c-num">349</td>
+      <td class="c-el">35</td>
+      <td class="c-avel">36</td>
+      <td class="c-app">17</td>
+      <td class="c-avapp">15</td>
+      <td class="c-denom"><span class="denom-ok">21</span></td>
+      <td class="c-oldres"><span class="badge b-working">17</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">358</td>
+      <td class="c-nel">35</td>
+      <td class="c-nmo">10</td>
+      <td class="c-nr6"><span class="badge b-ok">12</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Jul-25</td>
+      <td class="c-pipe">365</td>
+      <td class="c-num">350</td>
+      <td class="c-el">39</td>
+      <td class="c-avel">41</td>
+      <td class="c-app">22</td>
+      <td class="c-avapp">17</td>
+      <td class="c-denom"><span class="denom-ok">24</span></td>
+      <td class="c-oldres"><span class="badge b-working">15</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">365</td>
+      <td class="c-nel">39</td>
+      <td class="c-nmo">9</td>
+      <td class="c-nr6"><span class="badge b-ok">12</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Aug-25</td>
+      <td class="c-pipe">364</td>
+      <td class="c-num">362</td>
+      <td class="c-el">18</td>
+      <td class="c-avel">31</td>
+      <td class="c-app">14</td>
+      <td class="c-avapp">18</td>
+      <td class="c-denom"><span class="denom-ok">13</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">28</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">364</td>
+      <td class="c-nel">18</td>
+      <td class="c-nmo">20</td>
+      <td class="c-nr6"><span class="badge b-ok">13</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Sep-25</td>
+      <td class="c-pipe">388</td>
+      <td class="c-num">372</td>
+      <td class="c-el">19</td>
+      <td class="c-avel">25</td>
+      <td class="c-app">24</td>
+      <td class="c-avapp">20</td>
+      <td class="c-denom"><span class="denom-warn">5</span></td>
+      <td class="c-oldres"><span class="badge b-severe">70</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">388</td>
+      <td class="c-nel">19</td>
+      <td class="c-nmo">20</td>
+      <td class="c-nr6"><span class="badge b-ok">14</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Oct-25</td>
+      <td class="c-pipe">359</td>
+      <td class="c-num">370</td>
+      <td class="c-el">26</td>
+      <td class="c-avel">21</td>
+      <td class="c-app">17</td>
+      <td class="c-avapp">18</td>
+      <td class="c-denom"><span class="denom-warn">3</span></td>
+      <td class="c-oldres"><span class="badge b-severe">139</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">359</td>
+      <td class="c-nel">26</td>
+      <td class="c-nmo">14</td>
+      <td class="c-nr6"><span class="badge b-ok">13</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Nov-25</td>
+      <td class="c-pipe">376</td>
+      <td class="c-num">374</td>
+      <td class="c-el">35</td>
+      <td class="c-avel">27</td>
+      <td class="c-app">16</td>
+      <td class="c-avapp">19</td>
+      <td class="c-denom"><span class="denom-ok">8</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">49</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">376</td>
+      <td class="c-nel">35</td>
+      <td class="c-nmo">11</td>
+      <td class="c-nr6"><span class="badge b-ok">14</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Dec-25</td>
+      <td class="c-pipe">383</td>
+      <td class="c-num">373</td>
+      <td class="c-el">27</td>
+      <td class="c-avel">29</td>
+      <td class="c-app">16</td>
+      <td class="c-avapp">16</td>
+      <td class="c-denom"><span class="denom-ok">13</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">29</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">383</td>
+      <td class="c-nel">27</td>
+      <td class="c-nmo">14</td>
+      <td class="c-nr6"><span class="badge b-ok">15</span></td>
+      <td class="c-nr12">14</td>
+    </tr>
+<tr>
+      <td class="c-date">Jan-26</td>
+      <td class="c-pipe">382</td>
+      <td class="c-num">380</td>
+      <td class="c-el">42</td>
+      <td class="c-avel">35</td>
+      <td class="c-app">25</td>
+      <td class="c-avapp">19</td>
+      <td class="c-denom"><span class="denom-ok">16</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">24</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">382</td>
+      <td class="c-nel">42</td>
+      <td class="c-nmo">9</td>
+      <td class="c-nr6"><span class="badge b-ok">15</span></td>
+      <td class="c-nr12">13</td>
+    </tr>
+<tr>
+      <td class="c-date">Feb-26</td>
+      <td class="c-pipe">371</td>
+      <td class="c-num">379</td>
+      <td class="c-el">39</td>
+      <td class="c-avel">36</td>
+      <td class="c-app">31</td>
+      <td class="c-avapp">24</td>
+      <td class="c-denom"><span class="denom-ok">12</span></td>
+      <td class="c-oldres"><span class="badge b-inflated">32</span></td>
+      <td class="c-gap"></td>
+      <td class="c-npipe">371</td>
+      <td class="c-nel">39</td>
+      <td class="c-nmo">10</td>
+      <td class="c-nr6"><span class="badge b-ok">13</span></td>
+      <td class="c-nr12">13</td>
+    </tr>
+</tbody>
 </table>
+</div>
+</div>
 
 <script>
-const DATA = [
-  {m:"Jan-22",pipe:384,el:51,mo:8,r6:null,r12:null},
-  {m:"Feb-22",pipe:432,el:24,mo:18,r6:null,r12:null},
-  {m:"Mar-22",pipe:385,el:45,mo:9,r6:null,r12:null},
-  {m:"Apr-22",pipe:306,el:49,mo:6,r6:null,r12:null},
-  {m:"May-22",pipe:339,el:36,mo:9,r6:null,r12:null},
-  {m:"Jun-22",pipe:310,el:34,mo:9,r6:10,r12:null},
-  {m:"Jul-22",pipe:310,el:36,mo:9,r6:10,r12:null},
-  {m:"Aug-22",pipe:310,el:36,mo:9,r6:10,r12:null},
-  {m:"Sep-22",pipe:300,el:39,mo:8,r6:10,r12:null},
-  {m:"Oct-22",pipe:295,el:57,mo:5,r6:8,r12:null},
-  {m:"Nov-22",pipe:290,el:49,mo:6,r6:8,r12:null},
-  {m:"Dec-22",pipe:280,el:28,mo:10,r6:8,r12:9},
-  {m:"Jan-23",pipe:264,el:37,mo:7,r6:7,r12:9},
-  {m:"Feb-23",pipe:272,el:32,mo:9,r6:7,r12:9},
-  {m:"Mar-23",pipe:301,el:57,mo:5,r6:7,r12:8},
-  {m:"Apr-23",pipe:302,el:54,mo:6,r6:7,r12:8},
-  {m:"May-23",pipe:289,el:58,mo:5,r6:7,r12:7},
-  {m:"Jun-23",pipe:288,el:51,mo:6,r6:6,r12:7},
-  {m:"Jul-23",pipe:298,el:32,mo:9,r6:7,r12:7},
-  {m:"Aug-23",pipe:306,el:40,mo:8,r6:6,r12:7},
-  {m:"Sep-23",pipe:307,el:28,mo:11,r6:7,r12:7},
-  {m:"Oct-23",pipe:272,el:47,mo:6,r6:7,r12:7},
-  {m:"Nov-23",pipe:272,el:32,mo:9,r6:8,r12:7},
-  {m:"Dec-23",pipe:266,el:27,mo:10,r6:9,r12:7},
-  {m:"Jan-24",pipe:273,el:27,mo:10,r6:9,r12:8},
-  {m:"Feb-24",pipe:280,el:24,mo:12,r6:9,r12:8},
-  {m:"Mar-24",pipe:284,el:34,mo:8,r6:9,r12:8},
-  {m:"Apr-24",pipe:288,el:23,mo:13,r6:10,r12:9},
-  {m:"May-24",pipe:293,el:22,mo:13,r6:11,r12:9},
-  {m:"Jun-24",pipe:320,el:33,mo:10,r6:11,r12:10},
-  {m:"Jul-24",pipe:336,el:22,mo:15,r6:12,r12:10},
-  {m:"Aug-24",pipe:340,el:20,mo:17,r6:13,r12:11},
-  {m:"Sep-24",pipe:356,el:17,mo:21,r6:15,r12:12},
-  {m:"Oct-24",pipe:339,el:33,mo:10,r6:14,r12:12},
-  {m:"Nov-24",pipe:348,el:27,mo:13,r6:14,r12:13},
-  {m:"Dec-24",pipe:394,el:23,mo:17,r6:16,r12:13},
-  {m:"Jan-25",pipe:372,el:37,mo:10,r6:15,r12:13},
-  {m:"Feb-25",pipe:390,el:28,mo:14,r6:14,r12:13},
-  {m:"Mar-25",pipe:382,el:22,mo:17,r6:14,r12:14},
-  {m:"Apr-25",pipe:362,el:23,mo:16,r6:15,r12:14},
-  {m:"May-25",pipe:326,el:49,mo:7,r6:13,r12:14},
-  {m:"Jun-25",pipe:358,el:35,mo:10,r6:12,r12:14},
-  {m:"Jul-25",pipe:365,el:39,mo:9,r6:12,r12:13},
-  {m:"Aug-25",pipe:364,el:18,mo:20,r6:13,r12:14},
-  {m:"Sep-25",pipe:388,el:19,mo:20,r6:14,r12:14},
-  {m:"Oct-25",pipe:359,el:26,mo:14,r6:13,r12:14},
-  {m:"Nov-25",pipe:376,el:35,mo:11,r6:14,r12:14},
-  {m:"Dec-25",pipe:383,el:27,mo:14,r6:15,r12:14},
-  {m:"Jan-26",pipe:382,el:42,mo:9,r6:15,r12:13},
-  {m:"Feb-26",pipe:371,el:39,mo:10,r6:13,r12:13},
-];
+Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#64748b';
 
-// Color scale for runway months
-function moColor(v) {
-  if (v === null) return '';
-  if (v <= 5)  return 'background:#fee2e2;color:#991b1b';  // red-ish
-  if (v <= 7)  return 'background:#fef9c3;color:#713f12';  // light yellow
-  if (v <= 9)  return 'background:#fde68a;color:#78350f';  // yellow
-  if (v <= 11) return 'background:#bbf7d0;color:#14532d';  // light green
-  if (v <= 14) return 'background:#86efac;color:#14532d';  // medium green
-  if (v <= 17) return 'background:#4ade80;color:#14532d';  // green
-  return             'background:#16a34a;color:#fff';       // dark green
-}
-
-// Softer scale for rolling columns
-function rollColor(v) {
-  if (v === null) return '';
-  if (v <= 7)  return 'background:#fef9c3;color:#713f12';
-  if (v <= 10) return 'background:#d1fae5;color:#065f46';
-  if (v <= 13) return 'background:#6ee7b7;color:#065f46';
-  return             'background:#059669;color:#fff';
-}
-
-const tbody = document.getElementById('tbody');
-DATA.forEach(r => {
-  const isFeb26 = r.m === 'Feb-26';
-  const tr = document.createElement('tr');
-  if (isFeb26) tr.className = 'feb26';
-
-  const moStyle = moColor(r.mo);
-  const r6Style = rollColor(r.r6);
-  const r12Style = rollColor(r.r12);
-
-  tr.innerHTML = `
-    <td>${r.m}</td>
-    <td>${r.pipe.toLocaleString()}</td>
-    <td>${r.el}</td>
-    <td><span class="cell" style="${moStyle}">${r.mo}</span></td>
-    <td>${r.r6 !== null ? `<span class="cell" style="${r6Style}">${r.r6}</span>` : ''}</td>
-    <td>${r.r12 !== null ? `<span class="cell" style="${r12Style}">${r.r12}</span>` : ''}</td>
-  `;
-  tbody.appendChild(tr);
+const ctx = document.getElementById('volatilityChart').getContext('2d');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ["Aug-23", "Sep-23", "Oct-23", "Nov-23", "Dec-23", "Jan-24", "Feb-24", "Mar-24", "Apr-24", "May-24", "Jun-24", "Jul-24", "Aug-24", "Sep-24", "Oct-24", "Nov-24", "Dec-24", "Jan-25", "Feb-25", "Mar-25", "Apr-25", "May-25", "Jun-25", "Jul-25", "Aug-25", "Sep-25", "Oct-25", "Nov-25", "Dec-25", "Jan-26", "Feb-26"],
+    datasets: [
+      {
+        label: 'Old Formula Result',
+        data: [8, 9, 11, 10, 11, 15, 34, 30, 34, 33, 36, 33, 29, 47, 52, 61, -270, 371, 89, 32, 41, 21, 17, 15, 28, 70, 139, 49, 29, 24, 32],
+        borderColor: '#991b1b',
+        backgroundColor: 'rgba(153,27,27,0.06)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: ctx => {
+          const v = ctx.raw;
+          if (v < 0 || v > 100) return '#7f1d1d';
+          if (v > 40) return '#f59e0b';
+          return '#991b1b';
+        },
+        pointRadius: ctx => {
+          const v = ctx.raw;
+          return (v < 0 || v > 100) ? 7 : 4;
+        },
+        tension: 0.3,
+        fill: false,
+        yAxisID: 'y'
+      },
+      {
+        label: 'New Formula — 6-Mo Rolling',
+        data: [6, 7, 6, 6, 6, 7, 8, 8, 9, 11, 11, 12, 13, 15, 14, 14, 16, 15, 15, 14, 15, 14, 12, 12, 13, 14, 13, 14, 15, 15, 13],
+        borderColor: '#0d9488',
+        backgroundColor: 'rgba(13,148,136,0.08)',
+        borderWidth: 2.5,
+        pointRadius: 3,
+        tension: 0.3,
+        fill: false,
+        yAxisID: 'y'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { boxWidth: 12, padding: 20, font: { size: 11 } }
+      },
+      tooltip: {
+        callbacks: {
+          afterBody: items => {
+            const old = items.find(i => i.datasetIndex === 0);
+            if (old && (old.raw < 0 || old.raw > 100)) {
+              return ['⚠ Denominator near zero — result is not meaningful'];
+            }
+            return [];
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { maxRotation: 45, font: { size: 9.5 } }
+      },
+      y: {
+        grid: { color: '#f1f5f9' },
+        ticks: { font: { size: 10 }, callback: v => v + ' mo' },
+        min: -30,
+        max: 160,
+        title: {
+          display: true,
+          text: 'Pipeline months (capped at 160; actual extremes: −270 and +371)',
+          font: { size: 9, style: 'italic' },
+          color: '#94a3b8'
+        }
+      }
+    }
+  }
 });
 </script>
 </body>
